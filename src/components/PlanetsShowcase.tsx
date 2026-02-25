@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, MotionValue } from 'framer-mot
 
 const PLANETS = [
     {
-        id: 'mercury', name: 'Mercury', light: '#a8a8a8', base: '#8b8b8b', dark: '#636363', radius: 20,
+        id: 'mercury', name: 'Mercury', light: '#a8a8a8', base: '#8b8b8b', dark: '#636363', radius: 30,
         project: {
             title: "NEURAL CORE",
             desc: "A lightweight AI processing engine optimized for edge devices and low-latency environments.",
@@ -26,7 +26,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'venus', name: 'Venus', light: '#ffd269', base: '#e6af43', dark: '#b38122', radius: 26,
+        id: 'venus', name: 'Venus', light: '#ffd269', base: '#e6af43', dark: '#b38122', radius: 39,
         project: {
             title: "ATMOS ENGINE",
             desc: "Real-time weather atmospheric simulation for procedural world generation.",
@@ -49,7 +49,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'earth', name: 'Earth', light: '#6ab0ff', base: '#3d7bda', dark: '#244c8f', land: '#4ade80', landDark: '#166534', radius: 30,
+        id: 'earth', name: 'Earth', light: '#6ab0ff', base: '#3d7bda', dark: '#244c8f', land: '#4ade80', landDark: '#166534', radius: 45,
         project: {
             title: "TERRA FIRMA",
             desc: "A global sustainability platform tracking ecological shifts using satellite telemetry.",
@@ -72,7 +72,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'mars', name: 'Mars', light: '#ff6230', base: '#d13a0c', dark: '#8f2607', radius: 24,
+        id: 'mars', name: 'Mars', light: '#ff6230', base: '#d13a0c', dark: '#8f2607', radius: 36,
         project: {
             title: "ROVER OS",
             desc: "A robust operating system designed for remote autonomous exploratory vehicles.",
@@ -95,7 +95,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'jupiter', name: 'Jupiter', light: '#ffb24d', base: '#d98616', dark: '#9c5e0b', spot: '#ff4f4f', radius: 42,
+        id: 'jupiter', name: 'Jupiter', light: '#ffb24d', base: '#d98616', dark: '#9c5e0b', spot: '#ff4f4f', radius: 63,
         project: {
             title: "STORM WATCH",
             desc: "A high-performance data processing pipeline for real-time storm tracking and analysis.",
@@ -118,7 +118,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'saturn', name: 'Saturn', light: '#f2dc88', base: '#c7b056', dark: '#8f7d3a', ring: '#6c6242', radius: 40,
+        id: 'saturn', name: 'Saturn', light: '#f2dc88', base: '#c7b056', dark: '#8f7d3a', ring: '#6c6242', radius: 60,
         project: {
             title: "ORBITAL NET",
             desc: "Decentralized communication protocol for interstellar mesh networking.",
@@ -140,7 +140,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'uranus', name: 'Uranus', light: '#86ded1', base: '#55b3a5', dark: '#377a70', radius: 32,
+        id: 'uranus', name: 'Uranus', light: '#86ded1', base: '#55b3a5', dark: '#377a70', radius: 48,
         project: {
             title: "CRYOGEN CORE",
             desc: "Advanced cooling systems and resource management for deep-space stations.",
@@ -163,7 +163,7 @@ const PLANETS = [
         ]
     },
     {
-        id: 'neptune', name: 'Neptune', light: '#6d8ef0', base: '#4667cf', dark: '#2b448f', radius: 32,
+        id: 'neptune', name: 'Neptune', light: '#6d8ef0', base: '#4667cf', dark: '#2b448f', radius: 48,
         project: {
             title: "DEEP REACH",
             desc: "Autonomous deep-sea exploration vessels adapted for extraterrestrial oceans.",
@@ -241,6 +241,10 @@ export const PlanetsShowcase = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [selectedPlanet, setSelectedPlanet] = useState<any>(null);
     const [planetsReady, setPlanetsReady] = useState(false);
+    const [sunHealth, setSunHealth] = useState(30);
+    const [isExploded, setIsExploded] = useState(false);
+    const [sunShake, setSunShake] = useState({ x: 0, y: 0 });
+    const [clickParticles, setClickParticles] = useState<{ id: number, x: number, y: number, vx: number, vy: number }[]>([]);
 
     // stable initialization of position states to satisfy rules of hooks
     // but we use actual motion values for performance
@@ -272,19 +276,19 @@ export const PlanetsShowcase = () => {
         };
 
         const initial = PLANETS.map((p) => {
-            const x = 100 + Math.random() * (window.innerWidth - 200);
-            const y = 200 + Math.random() * (window.innerHeight - 400);
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
 
-            // Initial position update
-            mValues.current[p.id].x.set(x - p.radius);
-            mValues.current[p.id].y.set(y - p.radius);
+            // Initialize all at center for the "burst"
+            mValues.current[p.id].x.set(centerX - p.radius);
+            mValues.current[p.id].y.set(centerY - p.radius);
 
             return {
                 id: p.id,
-                x,
-                y,
-                vx: (Math.random() - 0.5) * 1.5,
-                vy: (Math.random() - 0.5) * 1.5,
+                x: centerX,
+                y: centerY,
+                vx: 0,
+                vy: 0,
                 radius: p.radius,
                 isDragging: false
             };
@@ -293,10 +297,53 @@ export const PlanetsShowcase = () => {
         setPlanetsReady(true);
     }, []);
 
+    const handleSunClick = (e: React.MouseEvent) => {
+        if (isExploded) return;
+
+        const newHealth = sunHealth - 1;
+        setSunShake({
+            x: (Math.random() - 0.5) * 15,
+            y: (Math.random() - 0.5) * 15
+        });
+        setTimeout(() => setSunShake({ x: 0, y: 0 }), 50);
+
+        // Spawn particles
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const centerX = e.clientX - rect.left;
+        const centerY = e.clientY - rect.top;
+
+        const newParticles = Array.from({ length: 8 }).map(() => ({
+            id: Date.now() + Math.random(),
+            x: centerX,
+            y: centerY,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10
+        }));
+        setClickParticles(prev => [...prev.slice(-20), ...newParticles]);
+
+        if (newHealth <= 0) {
+            setIsExploded(true);
+            // Inject explosion velocity
+            instancesRef.current.forEach(p => {
+                const angle = Math.random() * Math.PI * 2;
+                const force = 15 + Math.random() * 20;
+                p.vx = Math.cos(angle) * force;
+                p.vy = Math.sin(angle) * force;
+            });
+        } else {
+            setSunHealth(newHealth);
+        }
+    };
+
     useEffect(() => {
         if (!planetsReady) return;
 
         const updatePhysics = (now: number) => {
+            if (!isExploded) {
+                lastTimeRef.current = now;
+                requestRef.current = requestAnimationFrame(updatePhysics);
+                return;
+            }
             const dt = Math.min((now - lastTimeRef.current) / 16.66, 2);
             lastTimeRef.current = now;
 
@@ -351,7 +398,7 @@ export const PlanetsShowcase = () => {
 
         requestRef.current = requestAnimationFrame(updatePhysics);
         return () => cancelAnimationFrame(requestRef.current as number);
-    }, [planetsReady]);
+    }, [planetsReady, isExploded]);
 
     if (!planetsReady) return null;
 
@@ -359,16 +406,133 @@ export const PlanetsShowcase = () => {
         <section ref={containerRef} id="solar-system" className="w-full h-screen relative z-10 overflow-hidden bg-transparent">
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
                 <h2 className="text-4xl md:text-7xl lg:text-8xl font-black text-white/[0.07] tracking-[0.4em] uppercase select-none leading-none text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-                    PROJECT SHOWCASE
+                    {isExploded ? "SYSTEM RELEASED" : "DESTABILIZE CORE"}
                 </h2>
                 <div className="mt-6 flex items-center gap-4 opacity-10">
                     <div className="w-12 h-[1px] bg-white" />
-                    <p className="text-[7px] md:text-[9px] text-white tracking-[1em] uppercase">DOUBLE CLICK TO EXPLORE</p>
+                    <p className="text-[7px] md:text-[9px] text-white tracking-[1em] uppercase">
+                        {isExploded ? "DOUBLE CLICK PLANETS TO EXPLORE" : "SUN MUST BE ELIMINATED"}
+                    </p>
                     <div className="w-12 h-[1px] bg-white" />
                 </div>
             </div>
 
-            {PLANETS.map((planet) => {
+            {!isExploded && (
+                <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                        scale: isExploded ? 4 : (1 + (30 - sunHealth) * 0.01),
+                        opacity: isExploded ? 0 : 1,
+                        x: sunShake.x,
+                        y: sunShake.y,
+                    }}
+                    transition={{ type: "spring", damping: 12 }}
+                    onClick={handleSunClick}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-crosshair z-20 group select-none"
+                >
+                    <div className="relative">
+                        {/* Energy Corona Layers */}
+                        <motion.div
+                            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                            transition={{ rotate: { duration: 10, repeat: Infinity, ease: "linear" }, scale: { duration: 2, repeat: Infinity } }}
+                            className="absolute inset-[-40px] border-4 border-dashed border-[#fdd835]/20 rounded-full"
+                        />
+                        <motion.div
+                            animate={{ rotate: -360, scale: [1.2, 1, 1.2] }}
+                            transition={{ rotate: { duration: 15, repeat: Infinity, ease: "linear" }, scale: { duration: 3, repeat: Infinity } }}
+                            className="absolute inset-[-60px] border-2 border-dotted border-[#ff4f4f]/10 rounded-full"
+                        />
+
+                        {/* Main Glow */}
+                        <div className="absolute inset-[-100px] bg-gradient-to-r from-[#fdd835]/10 via-[#ff4f4f]/5 to-transparent blur-3xl animate-pulse" />
+
+                        {/* Solar Embers */}
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <motion.div
+                                key={`ember-${i}`}
+                                className="absolute w-1 h-1 bg-[#fdd835]"
+                                animate={{
+                                    x: [Math.cos(i) * 100, Math.cos(i) * 150],
+                                    y: [Math.sin(i) * 100, Math.sin(i) * 150],
+                                    opacity: [0, 1, 0],
+                                    scale: [0, 1.5, 0]
+                                }}
+                                transition={{
+                                    duration: 2 + Math.random() * 2,
+                                    repeat: Infinity,
+                                    delay: Math.random() * 2
+                                }}
+                            />
+                        ))}
+
+                        {/* Pixel Sun Art */}
+                        <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+                            <div className="grid grid-cols-12 grid-rows-12 w-full h-full">
+                                {Array.from({ length: 144 }).map((_, i) => {
+                                    const r = Math.floor(i / 12);
+                                    const c = i % 12;
+                                    const dist = Math.sqrt(Math.pow(r - 5.5, 2) + Math.pow(c - 5.5, 2));
+                                    const isInside = dist < 5.5;
+
+                                    let color = "transparent";
+                                    if (isInside) {
+                                        const heatMap = (30 - sunHealth) / 30;
+                                        if (dist < 2.5) color = heatMap > 0.8 ? "#fff" : "#ffff80";
+                                        else if (dist < 4) color = "#fdd835";
+                                        else if (dist < 5) color = "#f57c00";
+                                        else color = "#ff4f4f";
+                                    }
+
+                                    return (
+                                        <div
+                                            key={i}
+                                            style={{
+                                                backgroundColor: color,
+                                                boxShadow: isInside ? `0 0 ${10 + (30 - sunHealth)}px ${color}44` : 'none'
+                                            }}
+                                            className={isInside ? "relative overflow-hidden" : ""}
+                                        >
+                                            {isInside && Math.random() > 0.9 && (
+                                                <div className="absolute inset-0 bg-white/30 animate-ping" />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Click Particles */}
+                        {clickParticles.map(p => (
+                            <motion.div
+                                key={p.id}
+                                initial={{ x: p.x, y: p.y, opacity: 1, scale: 1 }}
+                                animate={{ x: p.x + p.vx * 10, y: p.y + p.vy * 10, opacity: 0, scale: 0 }}
+                                className="absolute w-2 h-2 bg-white z-50 pointer-events-none"
+                                onAnimationComplete={() => setClickParticles(prev => prev.filter(part => part.id !== p.id))}
+                            />
+                        ))}
+
+                        {/* Health HUD */}
+                        <div className="absolute -bottom-16 left-0 w-full px-4">
+                            <div className="flex justify-between text-[6px] text-[#fdd835] mb-2 font-black tracking-[0.2em]">
+                                <span>STATUS: CRITICAL</span>
+                                <span>CORE_STABILITY: {Math.round((sunHealth / 30) * 100)}%</span>
+                            </div>
+                            <div className="w-full h-1 bg-white/5 border border-white/10 p-[1px]">
+                                <motion.div
+                                    animate={{ width: `${(sunHealth / 30) * 100}%` }}
+                                    className="h-full bg-gradient-to-r from-[#ff4f4f] to-[#fdd835]"
+                                />
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 text-[8px] tracking-[0.5em] text-white/40 font-bold whitespace-nowrap">
+                            TERMINATE THE SOURCE
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+
+            {isExploded && PLANETS.map((planet) => {
                 const inst = instancesRef.current.find(i => i.id === planet.id)!;
                 const mPos = mValues.current[planet.id];
                 return (
