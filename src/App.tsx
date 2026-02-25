@@ -76,7 +76,7 @@ const App: React.FC = () => {
       <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-transparent">
         <div className="flex items-center gap-2">
           <span className="text-[#fdd835]">★</span>
-          <span className="text-[10px] md:text-xs text-[#fdd835]">ANTIGRAVITY v2.0</span>
+          <span className="text-[10px] md:text-xs text-[#fdd835]">Siddhant's World</span>
         </div>
         <div className="flex gap-4 md:gap-8">
           {[
@@ -100,12 +100,12 @@ const App: React.FC = () => {
 
       <main className="relative pt-20 pb-20 px-4 flex flex-col items-center">
         {/* Rocket Hero section acting as a fixed scroll timeline */}
-        <section ref={heroRef} className="relative w-full h-[250vh]">
+        <section ref={heroRef} className="relative w-full h-[120vh]">
           <div className="sticky top-0 w-full h-screen flex flex-col items-center justify-center overflow-hidden">
             {/* Rocket Hero with Parallax Takeoff */}
             <motion.div
+              className="absolute left-1/2 -translate-x-1/2 z-0 opacity-80 pointer-events-none top-[35%]"
               style={{ y: rocketY, scale: rocketScale }}
-              className="absolute left-1/2 -translate-x-1/2 z-0 opacity-80 pointer-events-none mt-10"
             >
               <div className="scene">
                 <div className="glow-trail"></div>
@@ -157,7 +157,7 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        <div className="relative w-full h-[300vh] mt-32"> {/* Extended scroll area for physics interactions */}
+        <div className="relative w-full h-[130vh]"> {/* Extended scroll area for physics interactions */}
           <div className="sticky top-0 w-full h-screen overflow-hidden pointer-events-none">
             <div className="pointer-events-auto h-full w-full">
               <PlanetsShowcase />

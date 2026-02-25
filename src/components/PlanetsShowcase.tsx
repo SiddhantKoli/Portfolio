@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, MotionValue } from 'framer-motion';
+import { AnimatedSun } from './AnimatedSun';
+import { SunExplosion } from './SunExplosion';
 
 const PLANETS = [
     {
@@ -241,10 +243,12 @@ export const PlanetsShowcase = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [selectedPlanet, setSelectedPlanet] = useState<any>(null);
     const [planetsReady, setPlanetsReady] = useState(false);
-    const [sunHealth, setSunHealth] = useState(30);
+    const [sunHealth, setSunHealth] = useState(14);
     const [isExploded, setIsExploded] = useState(false);
+    const [showExplosion, setShowExplosion] = useState(false);
     const [sunShake, setSunShake] = useState({ x: 0, y: 0 });
-    const [clickParticles, setClickParticles] = useState<{ id: number, x: number, y: number, vx: number, vy: number }[]>([]);
+    const [clickParticles, setClickParticles] = useState<{ id: number, x: number, y: number, vx: number, vy: number, color: string }[]>([]);
+    const processingExplosion = useRef(false);
 
     // stable initialization of position states to satisfy rules of hooks
     // but we use actual motion values for performance
@@ -298,7 +302,7 @@ export const PlanetsShowcase = () => {
     }, []);
 
     const handleSunClick = (e: React.MouseEvent) => {
-        if (isExploded) return;
+        if (isExploded || processingExplosion.current) return;
 
         const newHealth = sunHealth - 1;
         setSunShake({
@@ -307,23 +311,11 @@ export const PlanetsShowcase = () => {
         });
         setTimeout(() => setSunShake({ x: 0, y: 0 }), 50);
 
-        // Spawn particles
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        const centerX = e.clientX - rect.left;
-        const centerY = e.clientY - rect.top;
-
-        const newParticles = Array.from({ length: 8 }).map(() => ({
-            id: Date.now() + Math.random(),
-            x: centerX,
-            y: centerY,
-            vx: (Math.random() - 0.5) * 10,
-            vy: (Math.random() - 0.5) * 10
-        }));
-        setClickParticles(prev => [...prev.slice(-20), ...newParticles]);
-
         if (newHealth <= 0) {
+            // Final blow — let only the big SunExplosion fire (no click particles)
+            processingExplosion.current = true;
             setIsExploded(true);
-            // Inject explosion velocity
+            setShowExplosion(true);
             instancesRef.current.forEach(p => {
                 const angle = Math.random() * Math.PI * 2;
                 const force = 15 + Math.random() * 20;
@@ -331,7 +323,18 @@ export const PlanetsShowcase = () => {
                 p.vy = Math.sin(angle) * force;
             });
         } else {
+            // Normal hit — spawn one-shot solar particles
             setSunHealth(newHealth);
+            const sunColors = ['#ffdd00', '#ffaa00', '#ff5500', '#ff2200', '#cc0000'];
+            const newParticles = Array.from({ length: 8 }).map(() => ({
+                id: Date.now() + Math.random(),
+                x: e.clientX,
+                y: e.clientY,
+                vx: (Math.random() - 0.5) * 10,
+                vy: (Math.random() - 0.5) * 10,
+                color: sunColors[Math.floor(Math.random() * sunColors.length)]
+            }));
+            setClickParticles(prev => [...prev.slice(-20), ...newParticles]);
         }
     };
 
@@ -404,16 +407,41 @@ export const PlanetsShowcase = () => {
 
     return (
         <section ref={containerRef} id="solar-system" className="w-full h-screen relative z-10 overflow-hidden bg-transparent">
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
-                <h2 className="text-4xl md:text-7xl lg:text-8xl font-black text-white/[0.07] tracking-[0.4em] uppercase select-none leading-none text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+            <div className={`absolute inset-0 flex flex-col items-center pointer-events-none z-0 ${isExploded ? 'justify-center' : 'justify-start pt-16 md:pt-20'}`}>
+                <h2
+                    className="text-xl md:text-3xl lg:text-4xl font-black tracking-[0.4em] uppercase select-none leading-none text-center"
+                    style={{
+                        fontFamily: "'Press Start 2P', monospace",
+                        background: 'linear-gradient(180deg, #ffe566 0%, #ffcc00 35%, #e6a800 55%, #cc8800 75%, #996600 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        opacity: 0.12,
+                        filter: 'drop-shadow(0 0 20px rgba(255,200,0,0.15))',
+                        textShadow: '3px 3px 0px rgba(153,85,0,0.3), -1px -1px 0px rgba(255,238,128,0.2)',
+                        imageRendering: 'pixelated',
+                    }}
+                >
                     {isExploded ? "SYSTEM RELEASED" : "DESTABILIZE CORE"}
                 </h2>
-                <div className="mt-6 flex items-center gap-4 opacity-10">
-                    <div className="w-12 h-[1px] bg-white" />
-                    <p className="text-[7px] md:text-[9px] text-white tracking-[1em] uppercase">
+                <div className="mt-6 flex items-center gap-4">
+                    <div className="w-12 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, #ffcc00, transparent)', opacity: 0.2 }} />
+                    <p
+                        className="text-[7px] md:text-[9px] tracking-[1em] uppercase"
+                        style={{
+                            fontFamily: "'Press Start 2P', monospace",
+                            background: 'linear-gradient(180deg, #fff2b3 0%, #ffdd44 40%, #e6a800 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            opacity: 0.45,
+                            filter: 'drop-shadow(0 0 8px rgba(255,200,0,0.15))',
+                            imageRendering: 'pixelated',
+                        }}
+                    >
                         {isExploded ? "DOUBLE CLICK PLANETS TO EXPLORE" : "SUN MUST BE ELIMINATED"}
                     </p>
-                    <div className="w-12 h-[1px] bg-white" />
+                    <div className="w-12 h-[1px]" style={{ background: 'linear-gradient(90deg, transparent, #ffcc00, transparent)', opacity: 0.2 }} />
                 </div>
             </div>
 
@@ -431,96 +459,27 @@ export const PlanetsShowcase = () => {
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-crosshair z-20 group select-none"
                 >
                     <div className="relative">
-                        {/* Energy Corona Layers */}
-                        <motion.div
-                            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
-                            transition={{ rotate: { duration: 10, repeat: Infinity, ease: "linear" }, scale: { duration: 2, repeat: Infinity } }}
-                            className="absolute inset-[-40px] border-4 border-dashed border-[#fdd835]/20 rounded-full"
-                        />
-                        <motion.div
-                            animate={{ rotate: -360, scale: [1.2, 1, 1.2] }}
-                            transition={{ rotate: { duration: 15, repeat: Infinity, ease: "linear" }, scale: { duration: 3, repeat: Infinity } }}
-                            className="absolute inset-[-60px] border-2 border-dotted border-[#ff4f4f]/10 rounded-full"
-                        />
+                        {/* Energy Corona Layers removed as requested */}
 
                         {/* Main Glow */}
                         <div className="absolute inset-[-100px] bg-gradient-to-r from-[#fdd835]/10 via-[#ff4f4f]/5 to-transparent blur-3xl animate-pulse" />
 
-                        {/* Solar Embers */}
-                        {Array.from({ length: 12 }).map((_, i) => (
-                            <motion.div
-                                key={`ember-${i}`}
-                                className="absolute w-1 h-1 bg-[#fdd835]"
-                                animate={{
-                                    x: [Math.cos(i) * 100, Math.cos(i) * 150],
-                                    y: [Math.sin(i) * 100, Math.sin(i) * 150],
-                                    opacity: [0, 1, 0],
-                                    scale: [0, 1.5, 0]
-                                }}
-                                transition={{
-                                    duration: 2 + Math.random() * 2,
-                                    repeat: Infinity,
-                                    delay: Math.random() * 2
-                                }}
-                            />
-                        ))}
+                        {/* Solar Embers removed as requested */}
 
-                        {/* Pixel Sun Art */}
-                        <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
-                            <div className="grid grid-cols-12 grid-rows-12 w-full h-full">
-                                {Array.from({ length: 144 }).map((_, i) => {
-                                    const r = Math.floor(i / 12);
-                                    const c = i % 12;
-                                    const dist = Math.sqrt(Math.pow(r - 5.5, 2) + Math.pow(c - 5.5, 2));
-                                    const isInside = dist < 5.5;
-
-                                    let color = "transparent";
-                                    if (isInside) {
-                                        const heatMap = (30 - sunHealth) / 30;
-                                        if (dist < 2.5) color = heatMap > 0.8 ? "#fff" : "#ffff80";
-                                        else if (dist < 4) color = "#fdd835";
-                                        else if (dist < 5) color = "#f57c00";
-                                        else color = "#ff4f4f";
-                                    }
-
-                                    return (
-                                        <div
-                                            key={i}
-                                            style={{
-                                                backgroundColor: color,
-                                                boxShadow: isInside ? `0 0 ${10 + (30 - sunHealth)}px ${color}44` : 'none'
-                                            }}
-                                            className={isInside ? "relative overflow-hidden" : ""}
-                                        >
-                                            {isInside && Math.random() > 0.9 && (
-                                                <div className="absolute inset-0 bg-white/30 animate-ping" />
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        {/* Pixel Sun Art (Canvas Based) */}
+                        <div className="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center select-none pointer-events-none">
+                            <AnimatedSun health={sunHealth} />
                         </div>
-
-                        {/* Click Particles */}
-                        {clickParticles.map(p => (
-                            <motion.div
-                                key={p.id}
-                                initial={{ x: p.x, y: p.y, opacity: 1, scale: 1 }}
-                                animate={{ x: p.x + p.vx * 10, y: p.y + p.vy * 10, opacity: 0, scale: 0 }}
-                                className="absolute w-2 h-2 bg-white z-50 pointer-events-none"
-                                onAnimationComplete={() => setClickParticles(prev => prev.filter(part => part.id !== p.id))}
-                            />
-                        ))}
 
                         {/* Health HUD */}
                         <div className="absolute -bottom-16 left-0 w-full px-4">
                             <div className="flex justify-between text-[6px] text-[#fdd835] mb-2 font-black tracking-[0.2em]">
                                 <span>STATUS: CRITICAL</span>
-                                <span>CORE_STABILITY: {Math.round((sunHealth / 30) * 100)}%</span>
+                                <span>CORE_STABILITY: {Math.round((sunHealth / 14) * 100)}%</span>
                             </div>
                             <div className="w-full h-1 bg-white/5 border border-white/10 p-[1px]">
                                 <motion.div
-                                    animate={{ width: `${(sunHealth / 30) * 100}%` }}
+                                    animate={{ width: `${(sunHealth / 14) * 100}%` }}
                                     className="h-full bg-gradient-to-r from-[#ff4f4f] to-[#fdd835]"
                                 />
                             </div>
@@ -565,6 +524,21 @@ export const PlanetsShowcase = () => {
                     </motion.div>
                 );
             })}
+
+            {/* Render Click Particles globally so they map to clientX/clientY */}
+            {clickParticles.map(p => (
+                <motion.div
+                    key={p.id}
+                    initial={{ x: p.x, y: p.y, opacity: 1, scale: 1 }}
+                    animate={{ x: p.x + p.vx * 15, y: p.y + p.vy * 15, opacity: 0, scale: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="fixed top-0 left-0 w-2 h-2 z-[60] pointer-events-none"
+                    style={{ backgroundColor: p.color, boxShadow: `0 0 10px ${p.color}` }}
+                    onAnimationComplete={() => setClickParticles(prev => prev.filter(part => part.id !== p.id))}
+                />
+            ))}
+
+            {showExplosion && <SunExplosion onComplete={() => setShowExplosion(false)} />}
 
             <AnimatePresence>
                 {selectedPlanet && (
