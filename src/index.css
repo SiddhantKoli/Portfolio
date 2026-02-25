@@ -1,0 +1,382 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cosmic-bg: #0b0d17;
+  --color-cosmic-yellow: #fdd835;
+  --color-cosmic-blue: #4fa1ff;
+  --color-cosmic-purple: #9c4fff;
+  --color-cosmic-pink: #ff4f9c;
+  --color-cosmic-gray: #1a1c25;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #0b0d17;
+  color: white;
+  margin: 0;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Star field animations */
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: twinkle var(--duration) ease-in-out infinite;
+}
+
+/* Pixel Art Utilities */
+.pixel-border {
+  border: 2px solid;
+  position: relative;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.pixel-border::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.pixel-corners {
+  clip-path: polygon(0 4px, 4px 4px, 4px 0,
+      calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+      100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+      4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px));
+}
+
+.pixel-card {
+  @apply bg-cosmic-gray/40 border-2 border-white/10 p-4 transition-all duration-300;
+  position: relative;
+}
+
+.pixel-card:hover {
+  @apply border-cosmic-yellow/50 -translate-y-1;
+  box-shadow: 0 0 20px rgba(253, 216, 53, 0.2);
+}
+
+.pixel-card.active {
+  @apply border-cosmic-yellow;
+  box-shadow: 0 0 15px rgba(253, 216, 53, 0.4);
+}
+
+.pixel-card-corner {
+  @apply absolute w-2 h-2 border-cosmic-yellow;
+}
+
+/* Gradient backgrounds for project cards */
+.grad-react {
+  background: linear-gradient(135deg, #2a1a3e 0%, #4a1a4e 100%);
+}
+
+.grad-js {
+  background: linear-gradient(135deg, #1a2a3e 0%, #1a4a4e 100%);
+}
+
+.grad-api {
+  background: linear-gradient(135deg, #1a3e2a 0%, #2a4e1a 100%);
+}
+
+/* Earth horizon effect */
+.horizon-glow {
+  background: radial-gradient(circle at 50% 100%, rgba(79, 161, 255, 0.2) 0%, transparent 70%);
+}
+
+.grid-line {
+  background: rgba(79, 161, 255, 0.1);
+}
+
+/* Scroll indicator */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+.bounce {
+  animation: bounce 2s infinite;
+}
+
+/* Custom Spaceship Styles */
+.scene {
+  position: relative;
+  animation: thrust 0.12s steps(1) infinite;
+}
+
+@keyframes thrust {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.pixel-art {
+  display: grid;
+  grid-template-columns: repeat(16, 15px);
+  grid-template-rows: repeat(24, 15px);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 20px #4af) drop-shadow(0 0 40px #48f4);
+}
+
+.p {
+  width: 15px;
+  height: 15px;
+}
+
+.tr {
+  background: transparent;
+}
+
+.w {
+  background: #e8eeff;
+}
+
+.lg {
+  background: #a8b8d8;
+}
+
+.g {
+  background: #6878a0;
+}
+
+.dg {
+  background: #303850;
+}
+
+.bl {
+  background: #2060e0;
+}
+
+.lb {
+  background: #60a0ff;
+}
+
+.cy {
+  background: #40d0ff;
+}
+
+.re {
+  background: #ff3030;
+}
+
+.ye {
+  background: #ffe030;
+}
+
+.or {
+  background: #ff8020;
+}
+
+.pk {
+  background: #ff60a0;
+}
+
+.bk {
+  background: #101828;
+}
+
+.fl1 {
+  background: #ffffff;
+  animation: flicker1 0.1s steps(1) infinite;
+}
+
+.fl2 {
+  background: #ffe060;
+  animation: flicker2 0.1s steps(1) infinite;
+}
+
+.fl3 {
+  background: #ff8020;
+  animation: flicker3 0.12s steps(1) infinite;
+}
+
+.fl4 {
+  background: #ff2000;
+  animation: flicker4 0.15s steps(1) infinite;
+}
+
+.fl5 {
+  background: transparent;
+  animation: flicker5 0.1s steps(1) infinite;
+}
+
+@keyframes flicker1 {
+  0% {
+    background: #ffffff;
+  }
+
+  30% {
+    background: #ffe060;
+  }
+
+  60% {
+    background: #ffffff;
+  }
+
+  100% {
+    background: #ffe060;
+  }
+}
+
+@keyframes flicker2 {
+  0% {
+    background: #ffe060;
+  }
+
+  25% {
+    background: #ff8020;
+  }
+
+  50% {
+    background: #ffffff;
+  }
+
+  75% {
+    background: #ffe060;
+  }
+
+  100% {
+    background: #ff8020;
+  }
+}
+
+@keyframes flicker3 {
+  0% {
+    background: #ff8020;
+  }
+
+  40% {
+    background: #ff4000;
+  }
+
+  70% {
+    background: #ffe060;
+  }
+
+  100% {
+    background: #ff8020;
+  }
+}
+
+@keyframes flicker4 {
+  0% {
+    background: #ff2000;
+  }
+
+  33% {
+    background: #ff6000;
+  }
+
+  66% {
+    background: #ff2000;
+  }
+
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes flicker5 {
+  0% {
+    background: transparent;
+  }
+
+  40% {
+    background: #ff200055;
+  }
+
+  100% {
+    background: transparent;
+  }
+}
+
+.glow-trail {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 80px;
+  background: radial-gradient(ellipse at top, #ff8020aa 0%, #ff400055 40%, transparent 80%);
+  filter: blur(8px);
+  animation: glowpulse 0.15s steps(1) infinite;
+}
+
+@keyframes glowpulse {
+  0% {
+    opacity: 0.8;
+    height: 80px;
+  }
+
+  50% {
+    opacity: 1;
+    height: 100px;
+  }
+
+  100% {
+    opacity: 0.7;
+    height: 70px;
+  }
+}
+
+.speedlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #60a0ff44, transparent);
+  animation: slide var(--spd) linear infinite;
+  animation-delay: var(--del);
+  top: var(--top);
+  left: -200px;
+  width: var(--w);
+  image-rendering: pixelated;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(200vw);
+  }
+}
