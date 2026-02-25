@@ -220,7 +220,7 @@ const PixelPlanet = ({ planet }: { planet: any }) => {
                     );
                 })
             )}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[7px] md:text-[9px] font-bold uppercase text-white/40 tracking-widest whitespace-nowrap">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[7px] md:text-[9px] font-bold uppercase text-white/40 tracking-widest whitespace-nowrap select-none">
                 {planet.name}
             </div>
         </div>
