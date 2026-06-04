@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import '@fontsource/press-start-2p';
 import { PlanetsShowcase } from './components/PlanetsShowcase';
 
 const App: React.FC = () => {
