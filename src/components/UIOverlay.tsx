@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, Info } from 'lucide-react';
-import { PlanetData } from '../data/planets';
+import type { PlanetData } from '../data/planets';
 
 interface UIOverlayProps {
     selectedPlanet: PlanetData | null;

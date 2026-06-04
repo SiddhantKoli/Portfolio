@@ -2,7 +2,8 @@ import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, PerspectiveCamera, Environment, ContactShadows } from '@react-three/drei';
 import Planet from './Planet';
-import { PLANETS, PlanetData } from '../data/planets';
+import { PLANETS } from '../data/planets';
+import type { PlanetData } from '../data/planets';
 
 interface SolarSystemProps {
     onPlanetSelect: (planet: PlanetData) => void;
