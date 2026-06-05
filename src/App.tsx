@@ -141,7 +141,7 @@ const App: React.FC = () => {
 
             {/* Title Content */}
             <motion.div style={{ opacity: titleOpacity }} className="relative z-10 flex flex-col items-center">
-              <h1 className="text-[1.8rem] md:text-[4rem] font-black mb-8 text-center tracking-[0.22em] uppercase leading-[1.05]">
+              <h1 className="text-[0.9rem] md:text-[1.5rem] font-black mb-6 text-center tracking-[0.15em] uppercase leading-[1.1]">
                 <span className="block">SIDDHANT KOLI</span>
                 <span className="block">EXPLORING THE UNIVERSE OF CODE, AI, AND CREATIVITY</span>
               </h1>
