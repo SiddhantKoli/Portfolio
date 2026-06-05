@@ -81,6 +81,32 @@ body {
   box-shadow: 0 0 15px rgba(253, 216, 53, 0.4);
 }
 
+.liquid-glass-card {
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow), 0 0 34px var(--glass-glow);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+}
+
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 34%),
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 100%, rgba(96, 165, 250, 0.12), transparent 34%);
+}
+
+.liquid-glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: calc(var(--glass-radius) - 1px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 45%);
+}
+
 .pixel-card-corner {
   @apply absolute w-2 h-2 border-cosmic-yellow;
 }

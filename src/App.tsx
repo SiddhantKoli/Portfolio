@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Orbit, Rocket, Satellite, Send, Sparkle } from 'lucide-react';
 import { PlanetsShowcase } from './components/PlanetsShowcase';
+import { LiquidGlassCard } from './components/ui/liquid-glass';
 
 const App: React.FC = () => {
   const [stars, setStars] = useState<{ id: number, x: number, y: number, size: number, duration: string }[]>([]);
@@ -74,7 +76,7 @@ const App: React.FC = () => {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-transparent">
         <div className="flex items-center gap-2">
-          <span className="text-[#fdd835]">★</span>
+          <Sparkle className="h-3 w-3 text-[#fdd835]" aria-hidden="true" />
           <span className="text-[10px] md:text-xs text-[#fdd835]">Siddhant's World</span>
         </div>
         <div className="flex gap-4 md:gap-8">
@@ -139,8 +141,9 @@ const App: React.FC = () => {
 
             {/* Title Content */}
             <motion.div style={{ opacity: titleOpacity }} className="relative z-10 flex flex-col items-center">
-              <h1 className="text-2xl md:text-5xl font-black mb-8 text-center tracking-tighter">
-                HELLO, WORLD_!
+              <h1 className="text-2xl md:text-5xl font-black mb-8 text-center tracking-tighter uppercase leading-tight">
+                <span className="block">"SIDDHANT KOLI"</span>
+                <span className="block">"EXPLORING THE UNIVERSE OF CODE, AI, AND CREATIVITY."</span>
               </h1>
 
               <div className="flex items-center gap-4 mb-4">
@@ -174,33 +177,50 @@ const App: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
             {[
-              { id: 'task', title: 'MISSION CONTROL', tech: 'REACT', grad: 'grad-react', desc: 'Real-time dashboard for interplanetary telemetry.' },
-              { id: 'space', title: 'STAR-SHIP OS', tech: 'TYPESCRIPT', grad: 'grad-js', desc: 'Secure kernel for deep-space navigation units.' },
-              { id: 'weather', title: 'ATMOS-SCANNER', tech: 'WEBGL', grad: 'grad-api', desc: 'Visualizing gas giant storm patterns via API.' }
-            ].map((proj) => (
+              { id: 'task', title: 'MISSION CONTROL', tech: 'REACT', grad: 'grad-react', desc: 'Real-time dashboard for interplanetary telemetry.', icon: Satellite },
+              { id: 'space', title: 'STAR-SHIP OS', tech: 'TYPESCRIPT', grad: 'grad-js', desc: 'Secure kernel for deep-space navigation units.', icon: Rocket },
+              { id: 'weather', title: 'ATMOS-SCANNER', tech: 'WEBGL', grad: 'grad-api', desc: 'Visualizing gas giant storm patterns via API.', icon: Orbit }
+            ].map((proj) => {
+              const ProjectIcon = proj.icon;
+
+              return (
               <motion.div
                 key={proj.id}
-                whileHover={{ scale: 1.02 }}
-                className="pixel-card group overflow-hidden h-64 flex flex-col justify-end p-0 border-white/5 active"
+                whileHover={{ y: -6 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                className="group h-full"
               >
-                <div className={`absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity ${proj.grad}`} />
-                <div className="absolute top-6 left-6 text-2xl group-hover:rotate-12 transition-transform">🛸</div>
+                <LiquidGlassCard
+                  blurIntensity="md"
+                  glowIntensity="md"
+                  shadowIntensity="md"
+                  borderRadius="16px"
+                  className="h-72 p-5 flex flex-col justify-between"
+                >
+                  <div className={`absolute inset-0 opacity-25 transition-opacity duration-300 group-hover:opacity-40 ${proj.grad}`} />
+                  <div className="absolute inset-px rounded-[15px] border border-white/10 pointer-events-none" />
 
-                <div className="relative p-6 bg-[#0b0d17]/80 backdrop-blur-md border-t border-white/10">
-                  <h4 className="text-[12px] mb-2 font-bold">{proj.title}</h4>
-                  <p className="text-[8px] text-white/40 mb-4 leading-relaxed">{proj.desc}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[8px] text-[#00d1ff]">✦</span>
-                      <span className="text-[8px] tracking-widest text-[#00d1ff] bg-[#00d1ff]/10 px-2 py-1 rounded">
-                        {proj.tech}
-                      </span>
+                  <div className="relative z-10 flex items-start justify-between">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white shadow-inner">
+                      <ProjectIcon className="h-5 w-5" aria-hidden="true" />
                     </div>
-                    <span className="text-[10px] text-[#fdd835] group-hover:translate-x-1 transition-transform">→</span>
+                    <span className="rounded-full border border-[#00d1ff]/25 bg-[#00d1ff]/10 px-3 py-1 text-[8px] tracking-widest text-[#7adfff]">
+                      {proj.tech}
+                    </span>
                   </div>
-                </div>
+
+                  <div className="relative z-10 border-t border-white/10 pt-5">
+                    <h4 className="text-[12px] mb-3 font-bold tracking-wider">{proj.title}</h4>
+                    <p className="text-[8px] text-white/55 mb-6 leading-relaxed">{proj.desc}</p>
+                    <button className="flex items-center gap-2 text-[8px] tracking-[0.18em] text-[#fdd835] transition-colors hover:text-white">
+                      VIEW PROJECT
+                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                    </button>
+                  </div>
+                </LiquidGlassCard>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -280,7 +300,7 @@ const App: React.FC = () => {
               </div>
               <button className="pixel-button w-full mt-4 group">
                 <span className="mr-4">BROADCAST SIGNAL</span>
-                <span className="group-hover:translate-x-2 inline-block transition-transform">⚡</span>
+                <Send className="inline-block h-3 w-3 transition-transform group-hover:translate-x-2" aria-hidden="true" />
               </button>
             </div>
           </div>

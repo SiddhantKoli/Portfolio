@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, MotionValue } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { AnimatedSun } from './AnimatedSun';
 import { SunExplosion } from './SunExplosion';
 
@@ -559,7 +560,7 @@ export const PlanetsShowcase = () => {
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <a href={selectedPlanet.project.link} target="_blank" rel="noopener noreferrer" className="pixel-button flex-1 group">
                                         <span className="text-[10px]">VISIT MISSION SITE</span>
-                                        <span className="ml-2 group-hover:translate-x-1 transition-transform inline-block">→</span>
+                                        <ArrowRight className="ml-2 inline-block h-3 w-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                                     </a>
                                     <button onClick={() => setSelectedPlanet(null)} className="border border-white/10 hover:bg-white/5 text-white/50 text-[10px] px-8 py-4 transition-colors tracking-widest uppercase">CLOSE WINDOW</button>
                                 </div>
