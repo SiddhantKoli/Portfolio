@@ -13,6 +13,165 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+  <script>
+    /* ============================================
+       SPACE SATELLITE CURSOR
+       ============================================ */
+    
+    (function () {
+      const S = 3; // pixel size
+     
+      const FRAMES = [
+        // frame 0: beam OFF, light RED
+        { beam: false, light: '#ff3300' },
+        // frame 1: beam ON,  light ORANGE
+        { beam: true,  light: '#ffaa00' },
+        // frame 2: beam OFF, light GREEN
+        { beam: false, light: '#00ff88' },
+        // frame 3: beam ON,  light BLUE
+        { beam: true,  light: '#0088ff' },
+      ];
+     
+      let frameIdx = 0;
+      let canvas, ctx;
+     
+      function px(x, y, col) {
+        ctx.fillStyle = col;
+        ctx.fillRect(x * S, y * S, S, S);
+      }
+     
+      function drawSatellite(f) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+     
+        // --- Solar panel LEFT ---
+        [
+          [0,5,'#1144aa'],[0,6,'#2255bb'],[0,7,'#1144aa'],
+          [1,4,'#1a55bb'],[1,5,'#2255cc'],[1,6,'#4488ee'],[1,7,'#2255cc'],[1,8,'#1a55bb'],
+          [2,4,'#2266cc'],[2,5,'#3366dd'],[2,6,'#55aaff'],[2,7,'#3366dd'],[2,8,'#2266cc'],
+          [3,5,'#3377dd'],[3,6,'#4499ff'],[3,7,'#3377dd'],
+          [1,5,'#1a44bb'],[2,5,'#2255cc'],[1,7,'#1a44bb'],[2,7,'#2255cc'],
+        ].forEach(([x,y,c]) => px(x,y,c));
+     
+        // --- Solar panel RIGHT ---
+        [
+          [18,5,'#1144aa'],[18,6,'#2255bb'],[18,7,'#1144aa'],
+          [17,4,'#1a55bb'],[17,5,'#2255cc'],[17,6,'#4488ee'],[17,7,'#2255cc'],[17,8,'#1a55bb'],
+          [16,4,'#2266cc'],[16,5,'#3366dd'],[16,6,'#55aaff'],[16,7,'#3366dd'],[16,8,'#2266cc'],
+          [15,5,'#3377dd'],[15,6,'#4499ff'],[15,7,'#3377dd'],
+          [17,5,'#1a44bb'],[16,5,'#2255cc'],[17,7,'#1a44bb'],[16,7,'#2255cc'],
+        ].forEach(([x,y,c]) => px(x,y,c));
+     
+        // --- Arms ---
+        [[4,6,'#556677'],[5,6,'#667788'],[13,6,'#667788'],[14,6,'#556677']]
+          .forEach(([x,y,c]) => px(x,y,c));
+     
+        // --- Body ---
+        [
+          [6,4,'#889aaa'],[7,4,'#99aacc'],[8,4,'#aabbdd'],[9,4,'#aabbdd'],[10,4,'#99aacc'],[11,4,'#889aaa'],
+          [6,5,'#778899'],[7,5,'#88aacc'],[8,5,'#cce8ff'],[9,5,'#cce8ff'],[10,5,'#88aacc'],[11,5,'#778899'],
+          [6,6,'#667788'],[7,6,'#7799bb'],[8,6,'#aaccee'],[9,6,'#aaccee'],[10,6,'#7799bb'],[11,6,'#667788'],
+          [6,7,'#556677'],[7,7,'#778899'],[8,7,'#99aabb'],[9,7,'#99aabb'],[10,7,'#778899'],[11,7,'#556677'],
+          [6,8,'#445566'],[7,8,'#667788'],[8,8,'#889aaa'],[9,8,'#889aaa'],[10,8,'#667788'],[11,8,'#445566'],
+        ].forEach(([x,y,c]) => px(x,y,c));
+     
+        // --- Dish ---
+        [
+          [8,1,'#aabbcc'],[9,1,'#aabbcc'],
+          [7,2,'#99aabb'],[8,2,'#ccdde8'],[9,2,'#ccdde8'],[10,2,'#99aabb'],
+          [8,3,'#889aaa'],[9,3,'#889aaa'],
+          [8,4,'#778899'],[9,4,'#778899'],
+        ].forEach(([x,y,c]) => px(x,y,c));
+     
+        // --- Transmission beam ---
+        if (FRAMES[f].beam) {
+          px(8, 0, '#ffee44');
+          px(9, 0, '#ffee44');
+          ctx.fillStyle = 'rgba(255, 230, 50, 0.35)';
+          ctx.fillRect(7*S, 0,   S, S);
+          ctx.fillRect(10*S, 0,  S, S);
+          ctx.fillStyle = 'rgba(255, 230, 50, 0.15)';
+          ctx.fillRect(6*S, 0,   S, S);
+          ctx.fillRect(11*S, 0,  S, S);
+        }
+     
+        // --- Status light ---
+        const lc = FRAMES[f].light;
+        px(8, 6, lc);
+        px(9, 6, lc);
+        ctx.save();
+        ctx.globalAlpha = 0.25;
+        ctx.fillStyle = lc;
+        ctx.fillRect(7*S, 5*S, S*4, S*3);
+        ctx.restore();
+      }
+     
+      function buildCursorDataURL() {
+        drawSatellite(frameIdx);
+        return canvas.toDataURL('image/png');
+      }
+     
+      function init() {
+        canvas = document.createElement('canvas');
+        canvas.width  = 19 * S;
+        canvas.height = 13 * S;
+        canvas.style.imageRendering = 'pixelated';
+        ctx = canvas.getContext('2d');
+     
+        const cursorEl = document.createElement('div');
+        cursorEl.id = '__sat-cursor__';
+        cursorEl.style.cssText = [
+          'position:fixed',
+          'top:0','left:0',
+          'width:57px','height:39px',
+          'pointer-events:none',
+          'z-index:999999',
+          'image-rendering:pixelated',
+          'background-size:contain',
+          'background-repeat:no-repeat',
+          'display:none',
+        ].join(';');
+        document.body.appendChild(cursorEl);
+     
+        const style = document.createElement('style');
+        style.textContent = '* { cursor: none !important; }';
+        document.head.appendChild(style);
+     
+        let mx = 0, my = 0;
+        const HSX = 7 * S;
+        const HSY = 6 * S;
+     
+        document.addEventListener('mousemove', e => {
+          mx = e.clientX;
+          my = e.clientY;
+          cursorEl.style.display = 'block';
+          cursorEl.style.transform = `translate(${mx - HSX}px, ${my - HSY}px)`;
+        });
+     
+        document.addEventListener('mouseleave', () => {
+          cursorEl.style.display = 'none';
+        });
+     
+        let tick = 0;
+        function animate() {
+          tick++;
+          if (tick % 14 === 0) {
+            frameIdx = (frameIdx + 1) % FRAMES.length;
+            cursorEl.style.backgroundImage = `url(${buildCursorDataURL()})`;
+          }
+          requestAnimationFrame(animate);
+        }
+     
+        cursorEl.style.backgroundImage = `url(${buildCursorDataURL()})`;
+        animate();
+      }
+     
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 
 </html>
