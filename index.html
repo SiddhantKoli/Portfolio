@@ -44,7 +44,7 @@ text-shadow:1px 1px 0 var(--sun),2px 2px 0 var(--sun),3px 3px 0 var(--flare),4px
 .id{gap:4vw;flex-direction:row;text-align:left;flex-wrap:wrap;opacity:0}
 .port{position:relative;width:clamp(190px,26vw,340px);aspect-ratio:1;border:8px solid var(--sun);border-radius:50%;background:var(--panel);overflow:hidden;
 box-shadow:0 0 0 8px #000,0 0 60px rgba(63,183,232,.5);display:grid;place-items:center;flex:none}
-.port img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.port img{width:100%;height:100%;object-fit:cover;object-position:center 22%;image-rendering:auto;display:block}
 .port span{font-family:var(--px);font-size:clamp(28px,5vw,60px);color:var(--ion)}
 .port::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.18) 3px 4px);pointer-events:none}
 .card{max-width:520px}
@@ -96,7 +96,7 @@ footer{position:relative;z-index:1;text-align:center;padding:6vh 5vw;color:var(-
    
   </div>
   <div class="layer id" id="idc">
-   <div class="port" role="img" aria-label="Portrait of Siddhant"><!-- Swap with: <img src="me.png" alt=""> --><span>SK</span></div>
+   <div class="port"><img src="photograph.png" alt="Portrait of Siddhant"></div>
    <div class="card">
     <h2>Hi, I’m Siddhant.</h2>
     <p>I build web apps and experiment with AI. I like interfaces that feel like worlds, not templates.</p>
