@@ -73,7 +73,18 @@ canvas#orbs{position:fixed;inset:0;width:100%;height:100%;z-index:0;image-render
 footer{position:relative;z-index:1;text-align:center;padding:6vh 5vw;color:var(--dim);font-size:20px}
 @media(max-width:700px){.id{flex-direction:column;text-align:center;gap:22px}.btns{justify-content:center}.planet{opacity:.35;right:-12vw}nav div a:nth-child(n+4){display:none}}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.flame,.hint{animation:none}}
-</style>
+.m{display:block;color:var(--ink);text-decoration:none}
+.m:hover,.m:focus-visible{transform:translate(-3px,-3px);border-color:var(--sun);box-shadow:8px 8px 0 #000,0 0 24px rgba(63,183,232,.25);outline:none}
+.repo-link{font-family:var(--px);font-size:8px;color:var(--sun)}
+.skill-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;max-width:1050px;position:relative;z-index:1}
+.skill-group h3{font-family:var(--px);font-size:9px;line-height:1.8;color:var(--ion);margin:0 0 12px}
+.skill-groups .chips{display:flex;flex-wrap:wrap;gap:9px;max-width:none}
+.chip{position:relative;overflow:hidden;font-size:9px;padding:10px 11px;transition:transform .16s steps(3),border-color .16s,color .16s,background .16s,box-shadow .16s;--mx:50%;--my:50%}
+.chip::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx) var(--my),rgba(255,210,63,.28),transparent 68%);opacity:0;transition:opacity .16s;pointer-events:none}
+.chip:hover{transform:translateY(-4px) scale(1.04);border-color:var(--sun);color:var(--sun);box-shadow:3px 4px 0 #000,0 0 18px rgba(63,183,232,.22)}
+.chip:hover::before{opacity:1}
+@media(max-width:700px){.skill-groups{grid-template-columns:1fr;gap:18px}}
+@media(prefers-reduced-motion:reduce){.chip,.m{transition:none}.chip:hover{transform:none}}</style>
 </head>
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -99,8 +110,7 @@ footer{position:relative;z-index:1;text-align:center;padding:6vh 5vw;color:var(-
    <div class="port"><img src="photograph.png" alt="Portrait of Siddhant"></div>
    <div class="card">
     <h2>Hi, I’m Siddhant.</h2>
-    <p>I build web apps and experiment with AI. I like interfaces that feel like worlds, not templates.</p>
-    <div class="btns"><a class="btn" href="#projects">Start mission</a><a class="btn alt" href="#contact">Say hello</a></div>
+    <p>I turn ambitious ideas into useful AI-powered products and full-stack experiences. My work spans machine learning, local AI, RAG, and computer vision.</p>
    </div>
   </div>
  </div>
@@ -108,26 +118,30 @@ footer{position:relative;z-index:1;text-align:center;padding:6vh 5vw;color:var(-
 
 <section class="s" id="about">
  <div class="planet p2" data-speed="0.25"></div>
- <h2 class="rv">Who’s flying this thing</h2>
- <p class="rv">Add two or three honest sentences about yourself here: where you study or work, what you’re obsessed with, what you’re building next.</p>
- <p class="rv">Keep it human. People remember a voice, not a keyword list.</p>
+ <h2 class="rv">About me</h2>
+ <p class="rv">I build across artificial intelligence and machine learning, from grounded RAG assistants and offline voice tools to computer vision. I like taking a rough idea through the hard parts until it becomes something people can use.</p>
 </section>
 
 <section class="s" id="projects">
  <div class="planet p3" data-speed="0.4"></div>
  <h2 class="rv">Missions completed</h2>
  <div class="missions">
-  <article class="m rv"><h3>Project One</h3><p>One line on what it does and who it helps. Link to the live demo.</p></article>
-  <article class="m rv"><h3>Project Two</h3><p>Name the hard part you solved. That’s what interviewers ask about.</p></article>
-  <article class="m rv"><h3>Project Three</h3><p>Show results: users, speed, or what you learned.</p></article>
+  <a class="m rv" href="https://github.com/SiddhantKoli/Trace_AI" target="_blank" rel="noopener noreferrer"><h3>TRACE AI</h3><p>Turns application logs into evidence-based incident reports with machine-learning anomaly detection and incident correlation.</p><span class="repo-link">Open repository ↗</span></a>
+  <a class="m rv" href="https://github.com/SiddhantKoli/SemV_internship_group1" target="_blank" rel="noopener noreferrer"><h3>AquaPulse</h3><p>A grounded AI assistant for coastal communities in Palghar, combining local knowledge with multi-agent RAG and prompt-injection safeguards.</p><span class="repo-link">Open repository ↗</span></a>
+  <a class="m rv" href="https://github.com/SiddhantKoli/Roomies" target="_blank" rel="noopener noreferrer"><h3>Roomies</h3><p>An AI-assisted accommodation platform for finding places and matching with compatible flatmates.</p><span class="repo-link">Open repository ↗</span></a>
+  <a class="m rv" href="https://github.com/SiddhantKoli/sPEAKupAI" target="_blank" rel="noopener noreferrer"><h3>sPEAKupAI</h3><p>A real-time voice assistant that combines speech recognition with private, offline conversational AI.</p><span class="repo-link">Open repository ↗</span></a>
+  <a class="m rv" href="https://github.com/SiddhantKoli/First_local_AI_bot" target="_blank" rel="noopener noreferrer"><h3>Sainik Sahayak</h3><p>An offline-capable AI assistant for Indian Army personnel, using Llama 3.2 and retrieval-augmented generation to surface practical knowledge.</p><span class="repo-link">Open repository ↗</span></a>
  </div>
 </section>
 
 <section class="s" id="skills">
  <div class="planet p4" data-speed="0.3"></div>
  <h2 class="rv">Ship’s toolkit</h2>
- <div class="chips">
-  <span class="chip rv">React</span><span class="chip rv">TypeScript</span><span class="chip rv">Vite</span><span class="chip rv">Tailwind</span><span class="chip rv">Git</span><span class="chip rv">AI tools</span>
+ <div class="skill-groups">
+  <div class="skill-group rv"><h3>Languages</h3><div class="chips"><span class="chip">Python</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">Java</span><span class="chip">SQL</span><span class="chip">HTML</span><span class="chip">CSS</span></div></div>
+  <div class="skill-group rv"><h3>AI, machine learning &amp; vision</h3><div class="chips"><span class="chip">PyTorch</span><span class="chip">scikit-learn</span><span class="chip">Ollama</span><span class="chip">YOLOv8</span><span class="chip">Whisper</span><span class="chip">RAG</span><span class="chip">Streamlit</span></div></div>
+  <div class="skill-group rv"><h3>Web &amp; backend</h3><div class="chips"><span class="chip">Next.js</span><span class="chip">React</span><span class="chip">FastAPI</span><span class="chip">Node.js</span><span class="chip">Tailwind CSS</span></div></div>
+  <div class="skill-group rv"><h3>Data &amp; tools</h3><div class="chips"><span class="chip">PostgreSQL</span><span class="chip">MySQL</span><span class="chip">SQLite</span><span class="chip">Redis</span><span class="chip">Git</span><span class="chip">GitHub</span></div></div>
  </div>
 </section>
 
@@ -373,6 +387,8 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
  addEventListener("wheel",function(e){if(e.ctrlKey||e.metaKey)return;e.preventDefault();if(!active){target=scrollY;active=true}target=Math.max(0,Math.min(document.documentElement.scrollHeight-innerHeight,target+e.deltaY*.72));if(!raf)raf=requestAnimationFrame(tick)},{passive:false});
  addEventListener("keydown",function(e){if(["PageDown","PageUp","Home","End","ArrowDown","ArrowUp"," "].indexOf(e.key)>=0){target=scrollY;active=false;if(raf){cancelAnimationFrame(raf);raf=0}}},true);
 })();
+</script><script>
+(function(){document.querySelectorAll(".chip").forEach(function(el){el.addEventListener("pointermove",function(e){var r=el.getBoundingClientRect();el.style.setProperty("--mx",((e.clientX-r.left)/r.width*100)+"%");el.style.setProperty("--my",((e.clientY-r.top)/r.height*100)+"%")},{passive:true})})})();
 </script></body>
 </html>
 
