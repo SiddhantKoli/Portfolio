@@ -73,43 +73,34 @@ function backFace() {
 
 if (host && mount) {
   const root = createRoot(mount);
-  let isMounted = false;
-  let frontImage = '';
-  let backImage = '';
-  const update = () => {
-    const visible = Number.parseFloat(host.style.opacity || '0') > 0.015;
-    if (visible === isMounted) return;
-    isMounted = visible;
-    root.render(visible ? <Lanyard
-      frontImage={frontImage}
-      backImage={backImage}
-      imageFit="cover"
-      cardColor="#0b1424"
-      orientation="portrait"
-      finish="glossy"
-      cornerRadius={0.3}
-      size={0.46}
-      anchor="center"
-      strapLength={0.15}
-      strapColor="#111111"
-      strapWidth={0.65}
-      metal="silver"
-      gravity={1}
-      damping={0.5}
-      elasticity={0.5}
-      breeze={0.5}
-      interactive
-      intro
-    /> : null);
-  };
 
   document.fonts?.ready.then(async () => {
     try {
-      frontImage = await photoFace();
-      backImage = backFace();
-      const observer = new MutationObserver(update);
-      observer.observe(host, { attributes: true, attributeFilter: ['style'] });
-      update();
+      const frontImage = await photoFace();
+      const backImage = backFace();
+      root.render(
+        <Lanyard
+          frontImage={frontImage}
+          backImage={backImage}
+          imageFit="cover"
+          cardColor="#0b1424"
+          orientation="portrait"
+          finish="glossy"
+          cornerRadius={0.3}
+          size={0.46}
+          anchor="center"
+          strapLength={0.15}
+          strapColor="#111111"
+          strapWidth={0.65}
+          metal="silver"
+          gravity={1}
+          damping={0.5}
+          elasticity={0.5}
+          breeze={0.5}
+          interactive
+          intro
+        />
+      );
     } catch (error) {
       console.error('Could not prepare the Lanyard photo card.', error);
     }
