@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Lanyard from './components/Lanyard.jsx';
+import photographUrl from '../photograph.png';
 
 const host = document.getElementById('idc');
 const mount = document.getElementById('lanyard-root');
@@ -26,7 +27,7 @@ function photoFace() {
       resolve(canvas.toDataURL('image/png'));
     };
     photo.onerror = reject;
-    photo.src = new URL('/photograph.png', window.location.href).href;
+    photo.src = photographUrl;
   });
 }
 
