@@ -269,6 +269,75 @@ h1 i{color:transparent;-webkit-text-fill-color:transparent;text-shadow:none;
   .cc-action-btn{flex:1;justify-content:center}
   .contact-hud-bar{flex-direction:column;gap:8px}
 }
+/* Phone layout: keep controls and content within the viewport. */
+@media(max-width:700px){
+ html,body{width:100%;max-width:100%;overflow-x:clip}
+ body{font-size:clamp(20px,5vw,23px)}
+ main{width:100%;max-width:100%;overflow-x:clip}
+ section.s{padding-left:max(18px,6vw);padding-right:max(18px,6vw)}
+ .gal,.console,.skill-groups,.skill-group,.sg-in,.contact-wrap,.contact-console,.contact-grid,.contact-card{min-width:0;max-width:100%}
+ .gal-rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;width:100%}
+ .gal-rail button{min-width:0;padding:9px 3px}
+ .gal-bar{grid-column:1/-1;width:100%;margin:4px 0 0}
+ .con-bar{flex-wrap:wrap;letter-spacing:.03em;line-height:1.6}
+ .con-bar .ok{flex:1 0 100%;margin-left:0}
+ .sg-head{flex-wrap:wrap;min-width:0}
+ .sg-head h3{min-width:0;overflow-wrap:anywhere}
+ .sg-foot{min-width:0}
+ .contact-top{flex-wrap:wrap;gap:10px}
+ .contact-card{width:100%;min-width:0}
+ .cc-info{min-width:0}
+ .cc-val{overflow-wrap:anywhere}
+ .contact-hud-bar{min-width:0}
+ .sm-panel-inner{padding-left:18px;padding-right:18px}
+ .sm-panel-top{flex-wrap:wrap;gap:4px 12px}
+ .sm-panel-top span{overflow-wrap:anywhere}
+ .planet{max-width:45vw}
+}
+@media(max-width:420px){
+ .gal-rail button{font-size:7px}
+ .gs h3{font-size:clamp(16px,5vw,22px)}
+ .gs p{font-size:clamp(18px,5.3vw,20px)}
+ .contact-console{padding:18px}
+ .contact-card{gap:10px;padding:14px 12px}
+ .cc-badge{font-size:8px;padding:7px 8px}
+ .cc-name{font-size:clamp(10px,3vw,13px)}
+ .cc-email-actions{flex-wrap:wrap}
+ .cc-action-btn{font-size:8px;padding:9px 8px}
+ .sg-foot{font-size:6px}
+ .sg-seg i{width:6px;height:6px}
+ .sm-panel-top{font-size:6px}
+}/* Keep the scroll driven project gallery compact enough to remain pinned on phones. */
+@media(max-width:700px){
+ #projects .pin{padding:62px 18px 16px}
+ #projects h2{font-size:clamp(18px,5.4vw,25px);margin:0 0 8px}
+ #projects .gal{gap:6px}
+ #projects .gal-frame{height:clamp(148px,22svh,184px)}
+ #projects .gal-frame canvas{object-fit:cover;object-position:center 52%;padding:0;box-sizing:border-box}
+ #projects .gal-hud{padding:7px 9px;font-size:6px;gap:6px;background:rgba(5,8,18,.92)}
+ #projects .gal-hud span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ #projects .gal-frame .c.tl,#projects .gal-frame .c.tr{top:30px}
+ #projects .gal-count{margin:0 0 4px;line-height:1}
+ #projects .gal-count b{font-size:24px}
+ #projects .gal-count span{font-size:9px}
+ #projects .gal-count i{font-size:7px}
+ #projects .gal-slides{min-height:clamp(250px,37svh,300px)}
+ #projects .gs-tag{font-size:7px;padding:3px 6px;margin-bottom:5px}
+ #projects .gs h3{font-size:20px;line-height:1.15;margin:0 0 6px}
+ #projects .gs p{font-size:16px;line-height:1.12;margin:0 0 7px}
+ #projects .gs-tech{gap:4px;margin:0 0 9px}
+ #projects .gs-tech li{font-size:7px;padding:6px 7px}
+ #projects .gs-link{font-size:8px;padding:8px 10px}
+ #projects .gal-rail{margin-top:5px;gap:5px}
+ #projects .gal-rail button{font-size:7px;padding:7px 2px}
+}
+@media(max-width:420px){
+ #projects .pin{padding-top:56px;padding-bottom:12px}
+ #projects .gal-frame{height:144px}
+ #projects .gal-slides{min-height:250px}
+ #projects .gs p{font-size:15px}
+ #projects .gs-tech li{font-size:6px;padding:5px}
+}
 </style>
 </head>
 <body>
@@ -972,7 +1041,7 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
   if(lr&&lensFade>.001){
    if(distort){
     lsx.drawImage(sky,0,0,lsrc.width,lsrc.height);ltex.needsUpdate=true;
-    var lensWarp=1-ease(.26,.38,p);
+    var lensWarp=1-ease(.26,.416,p);
     LU.uC.value.set(cx,H-cy);
     LU.uE.value=rad*1.25*(1+.12*bump)*lensWarp;
     LU.uT.value=still?0:t*.00012;
