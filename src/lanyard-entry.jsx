@@ -101,8 +101,19 @@ if (host && mount) {
           intro
         />
       );
+      const waitForLanyardFrame = () => {
+        if (!document.getElementById('boot-screen')) return;
+        const canvas = mount.querySelector('canvas');
+        if (canvas && canvas.width > 0 && canvas.height > 0) {
+          window.__portfolioLoaderReady?.('lanyard');
+          return;
+        }
+        requestAnimationFrame(waitForLanyardFrame);
+      };
+      requestAnimationFrame(waitForLanyardFrame);
     } catch (error) {
       console.error('Could not prepare the Lanyard photo card.', error);
+      window.__portfolioLoaderReady?.('lanyard');
     }
   });
 }

@@ -339,9 +339,48 @@ h1 i{color:transparent;-webkit-text-fill-color:transparent;text-shadow:none;
  #projects .gs p{font-size:15px}
  #projects .gs-tech li{font-size:6px;padding:5px}
 }
+body.is-booting{overflow:hidden}
+#boot-screen{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;padding:clamp(24px,8vw,128px);background:#090d1a;color:var(--ink);opacity:1;visibility:visible;transition:opacity .32s steps(5),visibility .32s;isolation:isolate;overflow:hidden}
+#boot-screen::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(63,183,232,.13) 1px,transparent 1px);background-size:14px 14px;mask-image:linear-gradient(135deg,#000,transparent 90%)}
+#boot-screen.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-frame{width:100%;max-width:1600px;margin:0 auto;position:relative;font-family:var(--px)}
+.boot-head{display:flex;flex-direction:column;align-items:flex-start;gap:clamp(10px,2vh,22px);padding-bottom:clamp(24px,5vh,56px);border-bottom:2px solid rgba(63,183,232,.35)}
+.boot-title{font-size:clamp(15px,4vw,48px);line-height:1.35;letter-spacing:.04em;color:var(--ink)}
+.boot-subtitle{display:block;color:var(--dim);font:clamp(16px,2.3vw,28px)/1.2 var(--tx);letter-spacing:.1em}
+.boot-readout{display:flex;align-items:baseline;gap:.08em;margin:clamp(28px,7vh,76px) 0 clamp(24px,6vh,64px);font:clamp(76px,25vw,340px)/.82 var(--px);letter-spacing:-.1em;color:var(--sun);text-shadow:5px 5px 0 #000,0 0 34px rgba(255,210,63,.12);white-space:nowrap}
+.boot-track{height:clamp(12px,1.6vw,20px);width:100%;padding:2px;border:2px solid rgba(63,183,232,.65);background:#070b16;box-shadow:5px 5px 0 #000}
+.boot-track i{display:block;width:5%;height:100%;background:repeating-linear-gradient(90deg,var(--ion) 0 14px,rgba(63,183,232,.28) 14px 17px);transition:width .16s steps(4);box-shadow:0 0 18px rgba(63,183,232,.35)}
+.boot-foot{display:flex;justify-content:space-between;gap:14px;margin-top:16px;color:var(--ion);font-size:clamp(7px,1vw,11px);line-height:1.8;letter-spacing:.06em}.boot-foot span:last-child{color:var(--sun)}
+.boot-ticker{position:absolute;left:0;right:0;bottom:0;overflow:hidden;border-top:1px solid rgba(63,183,232,.28);padding:12px 0;color:rgba(63,183,232,.7);font:clamp(14px,2vw,22px)/1 var(--tx);letter-spacing:.12em;white-space:nowrap}
+.boot-ticker span{display:block;width:max-content;animation:boot-ticker 22s linear infinite}
+@media(max-width:600px){#boot-screen{padding:22px 20px 58px}.boot-head{gap:8px;padding-bottom:clamp(18px,3vh,28px)}.boot-title{font-size:clamp(13px,4vw,18px)}.boot-subtitle{font-size:clamp(15px,4.8vw,20px);letter-spacing:.06em}.boot-readout{margin:clamp(24px,5vh,40px) 0;font-size:clamp(64px,24vw,104px);letter-spacing:-.11em}.boot-track{height:12px}.boot-foot{font-size:7px;margin-top:12px}.boot-ticker{padding:10px 0;font-size:16px}}
+@media(max-height:520px) and (orientation:landscape){#boot-screen{padding:18px 8vw 48px}.boot-head{gap:4px;padding-bottom:12px}.boot-title{font-size:clamp(12px,3vw,17px)}.boot-subtitle{font-size:clamp(13px,4vh,18px)}.boot-readout{margin:16px 0;font-size:clamp(48px,14vh,76px)}.boot-track{height:10px}.boot-foot{margin-top:8px}.boot-ticker{padding:7px 0;font-size:14px}}
+@keyframes boot-ticker{to{transform:translateX(-50%)}}@media(prefers-reduced-motion:reduce){.boot-ticker span{animation:none}#boot-screen{transition:none}}
 </style>
 </head>
-<body>
+<body class="is-booting">
+<div id="boot-screen" role="status" aria-live="polite" aria-label="Loading portfolio">
+ <div class="boot-frame"><div class="boot-head"><span class="boot-title">ALL SYSTEMS</span><span class="boot-subtitle" id="boot-state">CALIBRATING STAR MAP</span></div>
+  <div class="boot-readout"><span id="boot-percent">01</span><span>%</span></div><div class="boot-track"><i id="boot-fill"></i></div>
+  <div class="boot-foot"><span>VISUAL FEED</span><span id="boot-step">00 / 04</span></div>
+ </div>
+ <div class="boot-ticker" aria-hidden="true"><span>VISUAL FEED&nbsp;&nbsp; // &nbsp;&nbsp;SYSTEMS CHECK&nbsp;&nbsp; // &nbsp;&nbsp;VISUAL FEED&nbsp;&nbsp; // &nbsp;&nbsp;SYSTEMS CHECK&nbsp;&nbsp; // &nbsp;&nbsp;</span></div>
+</div>
+<script>
+(function(){
+ var screen=document.getElementById("boot-screen"),fill=document.getElementById("boot-fill"),percent=document.getElementById("boot-percent"),state=document.getElementById("boot-state"),step=document.getElementById("boot-step"),start=performance.now(),ready={page:document.readyState==="complete",fonts:false,visual:false,lanyard:false},target=5,current=5,finished=false;
+ function paint(){current+=(target-current)*.16;if(target-current<.4)current=target;fill.style.width=Math.max(5,current)+"%";percent.textContent=String(Math.round(current)).padStart(2,"0");if(screen.isConnected)requestAnimationFrame(paint)}
+ requestAnimationFrame(paint);
+ function refresh(){target=5+(ready.page?35:0)+(ready.fonts?20:0)+(ready.visual?20:0)+(ready.lanyard?20:0);state.textContent=ready.lanyard?"ALL SYSTEMS READY":ready.visual?"VISUAL FEED STABLE":ready.page&&ready.fonts?"INITIALIZING VISUAL FEED":"CALIBRATING SYSTEMS";step.textContent=(Number(ready.page)+Number(ready.fonts)+Number(ready.visual)+Number(ready.lanyard)).toString().padStart(2,"0")+" / 04";
+  if(ready.page&&ready.fonts&&ready.visual&&ready.lanyard&&!finished){var wait=Math.max(0,620-(performance.now()-start));finished=true;setTimeout(function(){target=100;state.textContent="ALL SYSTEMS ONLINE";setTimeout(function(){screen.classList.add("is-done");document.body.classList.remove("is-booting");setTimeout(function(){screen.remove()},360)},320)},wait)}
+ }
+ window.__portfolioLoaderReady=function(name){if(name in ready){ready[name]=true;refresh()}};
+ if(ready.page)refresh();else addEventListener("load",function(){ready.page=true;refresh()},{once:true});
+ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){ready.fonts=true;refresh()}).catch(function(){ready.fonts=true;refresh()});else{ready.fonts=true;refresh()}
+ setTimeout(function(){ready.lanyard=true;refresh()},4500);
+ setTimeout(function(){ready.page=ready.fonts=ready.visual=ready.lanyard=true;refresh()},9000);
+})();
+</script>
 <canvas id="sky" aria-hidden="true"></canvas>
 <canvas id="lens" aria-hidden="true"></canvas>
 <canvas id="orbs" aria-hidden="true"></canvas>
@@ -557,6 +596,7 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
   idc.style.visibility=b<=.001?"hidden":"visible";
   planets.forEach(function(el){var r=el.parentNode.getBoundingClientRect();if(r.bottom>-50&&r.top<innerHeight+50){var m=(r.top+r.height/2-innerHeight/2)*parseFloat(el.dataset.speed);el.style.transform="translateY(calc(-50% + "+m+"px))"}});
   if(typeof window.orbs==="function")window.orbs(t);
+  if(!window.__portfolioVisualFrame){window.__portfolioVisualFrame=true;window.__portfolioLoaderReady?.("visual")}
   requestAnimationFrame(frame)}
  requestAnimationFrame(frame);
 
