@@ -107,7 +107,8 @@ body.target-cursor-enabled,body.target-cursor-enabled *{cursor:none!important}
 #target-cursor.is-clicking .tc-pulse{animation:tc-pulse .42s ease-out}
 @keyframes tc-spin{to{transform:rotate(360deg)}}
 @keyframes tc-pulse{0%{opacity:.9;transform:scale(.55)}100%{opacity:0;transform:scale(1.65)}}
-@media(prefers-reduced-motion:reduce){#target-cursor .tc-corners{animation:none}#target-cursor .tc-frame,#target-cursor .tc-label{transition:none}}/* Staggered pixel menu: replaces the horizontal navigation bar */
+@media(prefers-reduced-motion:reduce){#target-cursor .tc-corners{animation:none}#target-cursor .tc-frame,#target-cursor .tc-label{transition:none}}
+@media(hover:none) and (pointer:coarse){#target-cursor{display:none!important}body.target-cursor-enabled,body.target-cursor-enabled *{cursor:auto!important}}/* Staggered pixel menu: replaces the horizontal navigation bar */
 .sm-header{position:fixed;top:calc(20px + env(safe-area-inset-top,0px));right:5vw;z-index:52;display:flex;justify-content:flex-end;pointer-events:none}
 .sm-toggle{pointer-events:auto;display:flex;align-items:center;gap:14px;padding:12px 14px;background:rgba(9,13,26,.86);border:2px solid var(--ion);box-shadow:4px 4px 0 #000;color:var(--ink);font:10px var(--px);line-height:1;cursor:pointer;transition:color .2s,border-color .2s,transform .2s,box-shadow .2s}
 .sm-toggle:hover,.sm-toggle:focus-visible{color:var(--sun);border-color:var(--sun);transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000;outline:none}
@@ -1101,7 +1102,7 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
  }
  measurePieces();
  addEventListener("resize",measurePieces);
- if(!still)(function loop(){
+ var phoneInput=matchMedia("(hover:none) and (pointer:coarse)").matches; if(!still||phoneInput)(function loop(){
   var P=window.__heroP||0;
   if(P>=0.66||(P<=0.001&&scrollY>100)){requestAnimationFrame(loop);return}
   var H=innerHeight,W=innerWidth,launch=clamp((P-.39)/.16),sb=shipEl.getBoundingClientRect(),k=sb.height/3.5,
@@ -1371,7 +1372,7 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
 <div id="target-cursor" aria-hidden="true"><div class="tc-frame"><div class="tc-corners"><i class="tc-corner"></i><i class="tc-corner"></i><i class="tc-corner"></i><i class="tc-corner"></i></div><i class="tc-dot"></i><i class="tc-pulse"></i><span class="tc-label"></span></div></div>
 <script>document.querySelectorAll("a,button").forEach(function(el){el.classList.add("cursor-target")});</script><script>
 (function(){
- var fine=matchMedia("(pointer:fine)").matches,reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;if(!fine)return;
+ var fine=matchMedia("(pointer:fine)").matches,touch=matchMedia("(hover:none) and (pointer:coarse)").matches,reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;if(!fine||touch)return;
  var cursor=document.getElementById("target-cursor"),frame=cursor.querySelector(".tc-frame"),label=cursor.querySelector(".tc-label"),selector=".cursor-target",x=-100,y=-100,tx=-100,ty=-100,w=36,h=36,tw=36,th=36,hover=null,raf=0;
  document.body.classList.add("target-cursor-enabled");
  function setTarget(el){if(el===hover)return;hover=el;cursor.classList.toggle("is-target",!!el);label.textContent=el?(el.getAttribute("data-cursor-label")||""):"";}
