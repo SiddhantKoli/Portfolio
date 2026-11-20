@@ -914,7 +914,9 @@ const Lanyard = ({
     const frameView = () => {
       const s = settingsRef.current;
       const aspect = view.width / view.height;
-      let viewHeight = layout.height / clamp(s.size, 0.15, 0.9);
+      const phoneLayout = view.width <= 700;
+      const framingSize = phoneLayout ? Math.min(s.size, 0.32) : s.size;
+      let viewHeight = layout.height / clamp(framingSize, 0.15, 0.9);
       const minimumWidth = layout.width / 0.72;
       if (viewHeight * aspect < minimumWidth) viewHeight = minimumWidth / aspect;
       const viewWidth = viewHeight * aspect;
@@ -958,7 +960,8 @@ const Lanyard = ({
       if (framingKey !== applied.framingKey) {
         frameView();
         if (!placed) {
-          placeHanging(sim, layout, s.intro && !reducedMotion);
+          const touchPhone = view.width <= 700 && matchMedia('(pointer: coarse)').matches;
+          placeHanging(sim, layout, s.intro && !reducedMotion && !touchPhone);
           placed = true;
         } else if (layoutKey !== applied.layoutKey) {
           placeHanging(sim, layout, false);
@@ -1124,7 +1127,7 @@ const Lanyard = ({
         twistDamping: 3,
         grip: 40,
         gripDamping: 6,
-        breeze: reducedMotion ? 0 : clamp(s.breeze, 0, 1)
+        breeze: reducedMotion || (view.width <= 700 && matchMedia('(pointer: coarse)').matches) ? 0 : clamp(s.breeze, 0, 1)
       };
     };
 
