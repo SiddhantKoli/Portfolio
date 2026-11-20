@@ -1081,7 +1081,7 @@ function ease(a,b,x){var u=clamp((x-a)/(b-a));return u*u*(3-2*u)}
     LU.uTex.value=ltex;LU.uRes.value.set(W,H);
    }
   }
-  var cx=W*.5+Math.sin(p*3.2)*W*.045+M.x*W*.05,cy=H*.49+Math.cos(p*2.4)*H*.045+M.y*H*.04,rad=H*(.065+.405*ease(0,.30,p));if(W<=700)rad=Math.min(rad,W*.50,H*.34);
+  var cx=W*.5+M.x*W*.05,cy=H*.5+M.y*H*.04,rad=H*(.065+.405*ease(0,.30,p));if(W<=700)rad=Math.min(rad,W*.50,H*.34);
   var dt=Math.min(.05,(t-lt0)/1000);lt0=t;bump*=distort?.95:Math.pow(.95,dt*60);hc.x=cx;hc.y=cy;hc.rad=rad;hc.p=p;hc.rot=.10-p*.55-M.x*.10+(still?0:Math.sin(t/2600)*.03);drawInfall(p,t,dt,1-ease(.31,.335,p),M);
   // When color distortion is enabled, void stays transparent so the vibrant background stays visible behind the rocket and title
   var vt=ease(.19,.315,p),vo=1-ease(.355,.405,p),far=Math.hypot(Math.max(cx,W-cx),Math.max(cy,H-cy))+60,R=vt*vt*far;
